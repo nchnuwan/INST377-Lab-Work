@@ -110,13 +110,13 @@ async function mainEvent() {
   // This IF statement ensures we can't do anything if we don't have information yet
   if (arrayFromJson.data?.length) { return; }
 
-  let currentList = [];
   submit.style.display = 'block';
 
   // Let's hide the load animation now that we have some data to manipulate
   loadAnimation.classList.remove('lds-ellipsis');
   loadAnimation.classList.add('lds-ellipsis_hidden');
 
+  let currentList = [];
   form.addEventListener('input', (event) => {
     console.log(event.target.value);
     const filteredList = filterList(currentList, event.target.value);
