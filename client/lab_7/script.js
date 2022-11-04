@@ -1,7 +1,7 @@
 function getRandomIntInclusive(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1) + min); // The maximum is inclusive and the minimum is inclusive
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 function injectHTML(list) {
@@ -64,7 +64,7 @@ function processRestaurants(list) {
 function filterList(array, filterInputValue) {
   return array.filter((item) => {
     if (!item.name) { return; }
-    const lowerCaseName = item.name.lowerCaseName();
+    const lowerCaseName = item.name.toLowerCase();
     const lowerCaseQuery = filterInputValue.toLowerCase();
     return lowerCaseName.includes(lowerCaseQuery);
   });
@@ -108,38 +108,38 @@ async function mainEvent() {
   console.log(`${arrayFromJson.data[0].name} ${arrayFromJson.data[0].category}`);
 
   // This IF statement ensures we can't do anything if we don't have information yet
-  if (arrayFromJson.data?.length) { return; }
+  if (arrayFromJson.data?.length > 0) {
+    submit.style.display = 'block';
 
-  submit.style.display = 'block';
+    // Let's hide the load animation now that we have some data to manipulate
+    loadAnimation.classList.remove('lds-ellipsis');
+    loadAnimation.classList.add('lds-ellipsis_hidden');
 
-  // Let's hide the load animation now that we have some data to manipulate
-  loadAnimation.classList.remove('lds-ellipsis');
-  loadAnimation.classList.add('lds-ellipsis_hidden');
+    let currentList = [];
+    form.addEventListener('input', (event) => {
+      console.log(event.target.value);
+      const filteredList = filterList(currentList, event.target.value);
+      injectHTML(filteredList);
+    });
 
-  let currentList = [];
-  form.addEventListener('input', (event) => {
-    console.log(event.target.value);
-    const filteredList = filterList(currentList, event.target.value);
-    injectHTML(filteredList);
-  });
-
-  // And here's an eventListener! It's listening for a "submit" button specifically being clicked
-  // this is a synchronous event event, because we already did our async request above, and waited for it to resolve
-  form.addEventListener('submit', (submitEvent) => {
+    // And here's an eventListener! It's listening for a "submit" button specifically being clicked
+    // this is a synchronous event event, because we already did our async request above, and waited for it to resolve
+    form.addEventListener('submit', (submitEvent) => {
     // This is needed to stop our page from changing to a new URL even though it heard a GET request
-    submitEvent.preventDefault();
+      submitEvent.preventDefault();
 
-    // This constant will have the value of your 15-restaurant collection when it processes
-    currentList = processRestaurants(arrayFromJson.data);
-    console.log(currentList);
+      // This constant will have the value of your 15-restaurant collection when it processes
+      currentList = processRestaurants(arrayFromJson.data);
+      // console.log(currentList);
 
-    // And this function call will perform the "side effect" of injecting the HTML list for you
-    injectHTML(currentList);
+      // And this function call will perform the "side effect" of injecting the HTML list for you
+      injectHTML(currentList);
 
     // By separating the functions, we open the possibility of regenerating the list
     // without having to retrieve fresh data every time
     // We also have access to some form values, so we could filter the list based on name
-  });
+    });
+  }
 }
 
 /*
