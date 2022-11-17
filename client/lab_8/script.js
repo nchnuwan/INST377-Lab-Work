@@ -94,7 +94,7 @@ function markerPlace(array, map) {
     L.marker([coordinates[1], coordinates[0]]).addTo(map);
 
     if (index === 0) {
-      map.setView([coordinates[1], coordinates[0], 10]);
+      map.setView([coordinates[1], coordinates[0]], 10);
     }
   });
 }
